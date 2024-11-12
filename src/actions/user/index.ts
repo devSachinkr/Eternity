@@ -130,3 +130,14 @@ export const searchUsers = async (query: string) => {
     return { status: 500, data: undefined };
   }
 };
+
+export const inviteMembers = async (workspaceId: string, data: { receiverId: string; email: string }) => {
+  try {
+    const user = await currentUser();
+    if (!user) return { status: 403 };
+  } catch (error) {
+    console.log(error);
+    return { status: 500 };
+  }
+};
+

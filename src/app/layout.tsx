@@ -4,6 +4,7 @@ import { Manrope } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "@/provider/theme-provider";
 import ReactQueryClientProvider from "@/provider/react-query-client-provider";
+import { Toaster } from "@/components/ui/toaster";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -32,6 +33,7 @@ export default function RootLayout({
           > 
          <ReactQueryClientProvider>
               {children}
+              <Toaster />
          </ReactQueryClientProvider>
           </ThemeProvider>
         </body>

@@ -17,3 +17,13 @@ export type WorkspaceProps = {
     }[];
   };
 };
+
+
+export type NotificationProps={
+  staus:number ,
+  data:{
+    _count:{
+      notification:number
+    }
+  }
+}

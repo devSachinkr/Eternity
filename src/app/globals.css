@@ -189,3 +189,16 @@ html {
   top: calc(50% - 1.25em);
   left: calc(50% - 1.25em);
  }
+
+ .your-scrollable-container {
+  overflow-y: scroll; 
+  scrollbar-width: none;
+}
+
+.your-scrollable-container::-webkit-scrollbar {
+  display: none; /* Hides scrollbar */
+}
+
+.your-scrollable-container {
+  overflow-y: overlay;
+}
