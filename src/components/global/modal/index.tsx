@@ -17,7 +17,7 @@ interface Props {
 
 const index = ({ children, trigger, title, description, className }: Props) => {
   return (
-    <Dialog>
+    <Dialog >
       <DialogTrigger className={className}>{trigger}</DialogTrigger>
       <DialogContent>
         <DialogHeader>

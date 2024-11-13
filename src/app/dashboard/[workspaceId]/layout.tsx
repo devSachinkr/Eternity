@@ -6,6 +6,7 @@ import {
   hasAccessToWorkspace,
 } from "@/actions/workspace";
 import Sidebar from "@/components/dashboard/sidebar";
+import GlobalHeader from "@/components/global/header";
 import { queryClient } from "@/lib/react-query";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { redirect } from "next/navigation";
@@ -17,7 +18,7 @@ interface Props {
   };
 }
 
-const layout = async ({ children, params: { workspaceId } }: Props) => {
+const Layout = async ({ children, params: { workspaceId } }: Props) => {
   const authUser = await onAuthUser();
   if (!authUser.user?.workspace) return redirect("/auth/sign-in");
   if (!authUser.user?.workspace.length) return redirect("/auth/sign-in");
@@ -44,12 +45,17 @@ const layout = async ({ children, params: { workspaceId } }: Props) => {
   });
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <div className="flex h-screen w-screen">
+      <div className="flex h-screen w-screen ">
         <Sidebar activeWorkspaceId={workspaceId} />
-        {children}
+        <div className="w-full pt-28 p-6 overflow-y-scroll   overflow-x-hidden">
+          <GlobalHeader workspace={hasAccess.data} workspaceId={workspaceId} />
+          <div className="mt-4"></div>
+          {children}
+        </div>
       </div>
     </HydrationBoundary>
   );
 };
 
-export default layout;
+export default Layout;
+
