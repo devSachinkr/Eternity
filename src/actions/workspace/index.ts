@@ -142,3 +142,18 @@ export const createWorkspace = async (name: string) => {
     return { status: 500 };
   }
 };
+
+export const updateFolder = async ({ name, id }: { name: string; id: string }) => {
+  if (!name || !id) return { status: 400 };
+  try {
+    const res = await db.folder.update({
+      where: { id },
+      data: { name },
+    });
+    if (res) return { status: 200, data: "Folder updated successfully" };
+    return { status: 403 };
+  } catch (error) {
+    console.log(error);
+    return { status: 500 };
+  }
+};

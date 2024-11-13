@@ -1,15 +1,58 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-export const useFolder = () => {
+import { useMutationData } from "../mutation-data";
+import { updateFolder } from "@/actions/workspace";
+import { createFolder } from "@/actions/folder";
+export const useFolder = ({ folderId }: { folderId: string }) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const folderCardRef = useRef<HTMLDivElement>(null);
   const [rename, setRename] = useState(false);
+
+  const reName = () => setRename(true);
+  const reNamed = () => setRename(false);
   const router = useRouter();
   const handleClick = (pathname: string, id: string) => {
     router.push(`${pathname}/folder/${id}`);
   };
   const handleDoubleClick = (e: React.MouseEvent<HTMLParagraphElement>) => {
     e.stopPropagation();
-    setRename(true);
+    reName();
   };
-  return { rename, handleClick, handleDoubleClick };
+  const { mutate: renameFolder } = useMutationData({
+    mutationKey: ["rename-folders"],
+    mutationFn: (data: { name: string }) =>
+      updateFolder({ name: data.name, id: folderId }),
+    queryKey: "workspace-folders",
+    onSuccess: () => reNamed(),
+  });
+  const onUpdateFolderName = () => {
+    if (inputRef.current && folderCardRef.current) {
+      if (inputRef.current.textContent) {
+        renameFolder({ name: inputRef.current.textContent });
+      } else {
+        reNamed();
+      }
+    }
+  };
+  return {
+    rename,
+    handleClick,
+    handleDoubleClick,
+    inputRef,
+    folderCardRef,
+    onUpdateFolderName,
+  };
+};
+
+export const useCreateFolders = ({ workspaceId }: { workspaceId: string }) => {
+  const { mutate } = useMutationData({
+    mutationKey: ["create-folder"],
+    mutationFn: () => createFolder({ workspaceId }),
+    queryKey: "workspace-folders",
+  });
+
+  const onCreateFolder = () =>
+    mutate({ name: "Untitled", id: "optimistic--id" });
+  return { onCreateFolder };
 };

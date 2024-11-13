@@ -13,12 +13,22 @@ import { redirect } from "next/navigation";
 import React from "react";
 interface Props {
   children: React.ReactNode;
-  params: {
+  params: Promise<{
     workspaceId: string;
-  };
+  }>;
 }
 
-const Layout = async ({ children, params: { workspaceId } }: Props) => {
+const Layout = async (props: Props) => {
+  const params = await props.params;
+
+  const {
+    workspaceId
+  } = params;
+
+  const {
+    children
+  } = props;
+
   const authUser = await onAuthUser();
   if (!authUser.user?.workspace) return redirect("/auth/sign-in");
   if (!authUser.user?.workspace.length) return redirect("/auth/sign-in");
