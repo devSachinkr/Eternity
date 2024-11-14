@@ -23,6 +23,7 @@ const Folder = ({ name, id, optimistic, count }: Props) => {
     onUpdateFolderName,
     folderCardRef,
     inputRef,
+    latestVariables,
   } = useFolder({
     folderId: id,
   });
@@ -43,7 +44,7 @@ const Folder = ({ name, id, optimistic, count }: Props) => {
               onBlur={onUpdateFolderName}
               autoFocus
               placeholder={name}
-              className="border-none underline text-base w-full outline-none text-neutral-300 bg-transparent p-0"
+              className="border-none  text-base w-full outline-none text-neutral-300 bg-transparent p-0"
               ref={inputRef}
             />
           ) : (
@@ -52,7 +53,11 @@ const Folder = ({ name, id, optimistic, count }: Props) => {
               onDoubleClick={handleDoubleClick}
               onClick={(e) => e.stopPropagation()}
             >
-              {name}
+              {latestVariables &&
+              latestVariables.status === "pending" &&
+              latestVariables.variables.id === id
+                ? latestVariables.variables.name
+                : name}
             </p>
           )}
 

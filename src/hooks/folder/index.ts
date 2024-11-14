@@ -1,7 +1,7 @@
 "use client";
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { useMutationData } from "../mutation-data";
+import { useMutationData, useMutationDataState } from "../mutation-data";
 import { updateFolder } from "@/actions/workspace";
 import { createFolder } from "@/actions/folder";
 export const useFolder = ({ folderId }: { folderId: string }) => {
@@ -26,10 +26,13 @@ export const useFolder = ({ folderId }: { folderId: string }) => {
     queryKey: "workspace-folders",
     onSuccess: () => reNamed(),
   });
+  const { latestVariables } = useMutationDataState({
+    mutationKey: ["rename-folders"],
+  });
   const onUpdateFolderName = () => {
     if (inputRef.current && folderCardRef.current) {
-      if (inputRef.current.textContent) {
-        renameFolder({ name: inputRef.current.textContent });
+      if (inputRef.current.value) {
+        renameFolder({ name: inputRef.current.value });
       } else {
         reNamed();
       }
@@ -42,6 +45,7 @@ export const useFolder = ({ folderId }: { folderId: string }) => {
     inputRef,
     folderCardRef,
     onUpdateFolderName,
+    latestVariables,
   };
 };
 

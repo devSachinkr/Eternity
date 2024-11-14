@@ -143,7 +143,13 @@ export const createWorkspace = async (name: string) => {
   }
 };
 
-export const updateFolder = async ({ name, id }: { name: string; id: string }) => {
+export const updateFolder = async ({
+  name,
+  id,
+}: {
+  name: string;
+  id: string;
+}) => {
   if (!name || !id) return { status: 400 };
   try {
     const res = await db.folder.update({
@@ -151,6 +157,29 @@ export const updateFolder = async ({ name, id }: { name: string; id: string }) =
       data: { name },
     });
     if (res) return { status: 200, data: "Folder updated successfully" };
+    return { status: 403 };
+  } catch (error) {
+    console.log(error);
+    return { status: 500 };
+  }
+};
+
+export const moveVideoLocation = async ({
+  videoId,
+  folder_id,
+  workspaceId,
+}: {
+  videoId: string;
+  folder_id: string;
+  workspaceId: string;
+}) => {
+  try {
+    if (!videoId ||  !workspaceId) return { status: 400 };
+    const res = await db.video.update({
+      where: { id: videoId },
+      data: { folderId: folder_id || null, workSpaceId: workspaceId },
+    });
+    if (res) return { status: 200, data: "Video moved successfully" };
     return { status: 403 };
   } catch (error) {
     console.log(error);

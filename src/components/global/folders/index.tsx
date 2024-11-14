@@ -14,7 +14,7 @@ interface Props {
 
 const Folders = ({ workspaceId }: Props) => {
     const [isClient, setIsClient] = useState(false);
-  const { data, isFetched } = useQueryData(["workspace-folders"], () =>
+  const { data} = useQueryData(["workspace-folders"], () =>
     getWorkspaceFolders({ workspaceId })
   );
   const { latestVariables } = useMutationDataState({
@@ -41,7 +41,7 @@ const Folders = ({ workspaceId }: Props) => {
       <section
         className={cn(
           status !== 200 && "justify-center",
-          "flex items-center gap-4 overflow-x-auto w-full"
+          "flex items-center gap-4 overflow-x-auto w-full your-scrollable-container"
         )}
       >
         {status !== 200 ? (
