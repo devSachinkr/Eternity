@@ -4,7 +4,7 @@ import { Manrope } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "@/provider/theme-provider";
 import ReactQueryClientProvider from "@/provider/react-query-client-provider";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/components/ui/sonner";
 import { ReduxProvider } from "@/redux/provider";
 
 const manrope = Manrope({

@@ -1,3 +1,4 @@
+
 export type WorkspaceProps = {
   data: {
     subscription: {
@@ -47,6 +48,9 @@ export type FoldersProps = {
     name: string;
     createdAt: Date;
     workspaceId: string | null;
+    _count: {
+      videos: number;
+    };
   }[];
 };
 
@@ -68,4 +72,28 @@ export type VideosProps = {
     title: string | null;
     source: string;
   }[];
+};
+
+export type PreviewVideoProps = {
+  status: number;
+  author: boolean;
+  data: {
+    User: {
+      firstname: string | null;
+      lastname: string | null;
+      image: string | null;
+      clerkId: string;
+      trial: boolean;
+      subscription: {
+        plan: "FREE" | "PRO";
+      } | null;
+    };
+    title: string | null;
+    description: string | null;
+    source: string;
+    createdAt: Date;
+    summery: string | null;
+    processing: boolean;
+
+  };
 };

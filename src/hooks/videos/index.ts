@@ -1,9 +1,14 @@
+"use client";
+import { getWorkspaceFolders, moveVideoLocation } from "@/actions/workspace";
+import { VideoLocationSchema } from "@/components/global/videos/schema";
 import { useAppSelector } from "@/redux/store";
 import { useEffect, useState } from "react";
 import { useMutationData } from "../mutation-data";
-import { getWorkspaceFolders, moveVideoLocation } from "@/actions/workspace";
 import { useZodForm } from "../zod-form";
-import { VideoLocationSchema } from "@/components/global/videos/schema";
+import { useQueryData } from "../query-data";
+import { getPreviewVideo } from "@/actions/video";
+import { useRouter } from "next/navigation";
+import { PreviewVideoProps } from "@/types/index.type";
 
 export const useVideoLocation = ({
   currentWorkspace,
@@ -33,15 +38,15 @@ export const useVideoLocation = ({
     mutationKey: ["change-video-location"],
     mutationFn: ({
       folder_id,
-      workspaceId,
+      workspace_id,
     }: {
       folder_id: string;
-      workspaceId: string;
+      workspace_id: string;
     }) =>
       moveVideoLocation({
         videoId,
         folder_id,
-        workspaceId,
+        workspaceId: workspace_id,
       }),
   });
 
@@ -72,5 +77,27 @@ export const useVideoLocation = ({
     });
     return workspace.unsubscribe();
   }, [hookForm.watch]);
-  return { isFolders, isFetching, handleSubmit, isPending, folders ,hookForm,workspaces};
+  return {
+    isFolders,
+    isFetching,
+    handleSubmit,
+    isPending,
+    folders,
+    hookForm,
+    workspaces,
+  };
+};
+
+export const usePreviewVideo = ({ videoId }: { videoId: string }) => {
+  const router = useRouter();
+  const { data } = useQueryData(["preview-video"], () =>
+    getPreviewVideo({ videoId })
+  );
+  const { data: previewVideo, author, status } = data as PreviewVideoProps;
+  if (status !== 200) router.push("/");
+  const daysAgo = Math.floor(
+    (new Date().getTime() - previewVideo?.createdAt.getTime()) /
+      (1000 * 60 * 60 * 24)
+  );
+  return { previewVideo, author, status, daysAgo };
 };

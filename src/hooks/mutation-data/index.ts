@@ -25,16 +25,16 @@ const useMutationData = ({
     mutationFn,
     mutationKey,
     onSuccess: (data) => {
-      if (onSuccess) {
+      if (onSuccess) onSuccess();
         return ToastNotify({
-          title: `${data?.status === 200 ? "Success" : "Oops!"}`,
+          title: `${data?.status === 200 || data?.status === 201  ? "Success" : "Oops!"}`,
           msg: `${
-            data?.status === 200
+            data?.status === 200|| data?.status === 201
               ? "Data has been updated successfully"
               : "Something went wrong"
           }`,
         });
-      }
+      
     },
     onSettled: async () => {
       return await queryClient.invalidateQueries({ queryKey: [queryKey] });
