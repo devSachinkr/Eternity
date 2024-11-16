@@ -24,6 +24,7 @@ const Folder = ({ name, id, optimistic, count }: Props) => {
     folderCardRef,
     inputRef,
     latestVariables,
+    isPending,
   } = useFolder({
     folderId: id,
   });
@@ -37,7 +38,7 @@ const Folder = ({ name, id, optimistic, count }: Props) => {
         "flex hover:bg-neutral-800 cursor-pointer transition duration-150 items-center gap-2 justify-between min-w-[250px] py-4 px-4 rounded-lg border-[1px]"
       )}
     >
-      <Spinner loading={false}>
+      <Spinner loading={isPending}>
         <div className="flex flex-col gap-[1px]">
           {rename ? (
             <Input

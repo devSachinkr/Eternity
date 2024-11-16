@@ -1,22 +1,25 @@
 "use client";
 
 import { usePreviewVideo } from "@/hooks/videos";
-import React from "react";
-import EditVideo from "./edit-video";
+import { truncateString } from "@/lib/utils";
 import CopyLink from "../copy-link";
 import RichLink from "../rich-link";
-import { truncateString } from "@/lib/utils";
+import EditVideo from "./edit-video";
+import TabMenu from "@/components/tabs";
+import AiTools from "../../ai-tools";
+import VideoTranscript from "../../video-transcript";
+import { TabsContent } from "@/components/ui/tabs";
 
 interface Props {
   videoId: string;
 }
 
 const PreviewVideo = ({ videoId }: Props) => {
-  const { previewVideo, author, status, daysAgo } = usePreviewVideo({
+  const { previewVideo, author, daysAgo } = usePreviewVideo({
     videoId,
   });
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-3 p-10 lg:px-20 lg:py-10 overflow-y-auto gap-5">
+    <div className="grid grid-cols-1 xl:grid-cols-3   lg:py-10 overflow-y-auto gap-5">
       <div className="flex flex-col lg:col-span-2 gap-y-10">
         <div>
           <div className="flex gap-x-5 items-start justify-between">
@@ -71,7 +74,7 @@ const PreviewVideo = ({ videoId }: Props) => {
         </div>
       </div>
       <div className="lg:col-span-1 flex flex-col gap-y-16">
-        <div className="flex justify-end gap-x-3">
+        <div className="flex justify-end gap-x-3 items-center ">
           <CopyLink
             videoId={videoId}
             variant="outline"
@@ -79,10 +82,25 @@ const PreviewVideo = ({ videoId }: Props) => {
           />
           <RichLink
             id={videoId}
-            description={truncateString(previewVideo.description as string, 150)}
+            description={truncateString(
+              previewVideo.description as string,
+              150
+            )}
             source={previewVideo.source as string}
             title={previewVideo.title as string}
           />
+        </div>
+        <div>
+          <TabMenu
+            triggers={["Ai Tools", "Transcript", "Activity"]}
+            defaultValue="Ai Tools"
+          >
+            <AiTools />
+            <VideoTranscript transcript={previewVideo.description as string} />
+            <TabsContent value="Activity">
+              <p>Activity</p>
+            </TabsContent>
+          </TabMenu>
         </div>
       </div>
     </div>

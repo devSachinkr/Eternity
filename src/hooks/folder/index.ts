@@ -19,7 +19,7 @@ export const useFolder = ({ folderId }: { folderId: string }) => {
     e.stopPropagation();
     reName();
   };
-  const { mutate: renameFolder } = useMutationData({
+  const { mutate: renameFolder,isPending } = useMutationData({
     mutationKey: ["rename-folders"],
     mutationFn: (data: { name: string }) =>
       updateFolder({ name: data.name, id: folderId }),
@@ -46,6 +46,7 @@ export const useFolder = ({ folderId }: { folderId: string }) => {
     folderCardRef,
     onUpdateFolderName,
     latestVariables,
+    isPending,
   };
 };
 

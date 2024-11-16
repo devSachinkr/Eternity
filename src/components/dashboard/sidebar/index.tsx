@@ -120,8 +120,8 @@ const Sidebar = ({ activeWorkspaceId }: Props) => {
         </div>
       )}
 
-      <nav className="w-full">
-        <ul className="h-[150px] overflow-auto overflow-x-hidden fade-layer">
+      <nav className="w-full ">
+        <ul className="h-[150px] overflow-auto overflow-x-hidden fade-layer your-scrollable-container">
           {workspaces.workspace.length &&
             workspaces.workspace.map(
               (workspace) =>
