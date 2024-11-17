@@ -1,3 +1,4 @@
+import { getUserProfile, getVideoComments } from "@/actions/user";
 import { getPreviewVideo } from "@/actions/video";
 import PreviewVideo from "@/components/global/videos/preview-video";
 import { queryClient } from "@/lib/react-query";
@@ -15,6 +16,14 @@ const page = async ({ params }: Props) => {
   await queryClient.prefetchQuery({
     queryKey: ["preview-video"],
     queryFn: () => getPreviewVideo({ videoId }),
+  });
+  await queryClient.prefetchQuery({
+    queryKey: ["user-profile"],
+    queryFn: () => getUserProfile(),
+  });
+  await queryClient.prefetchQuery({
+    queryKey: ["video-comments"],
+    queryFn: () => getVideoComments(videoId),
   });
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

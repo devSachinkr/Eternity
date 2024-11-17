@@ -8,7 +8,7 @@ import EditVideo from "./edit-video";
 import TabMenu from "@/components/tabs";
 import AiTools from "../../ai-tools";
 import VideoTranscript from "../../video-transcript";
-import { TabsContent } from "@/components/ui/tabs";
+import Activity from "../../activity";
 
 interface Props {
   videoId: string;
@@ -97,9 +97,7 @@ const PreviewVideo = ({ videoId }: Props) => {
           >
             <AiTools />
             <VideoTranscript transcript={previewVideo.description as string} />
-            <TabsContent value="Activity">
-              <p>Activity</p>
-            </TabsContent>
+            <Activity author={previewVideo.User?.firstname as string} videoId={videoId} />
           </TabMenu>
         </div>
       </div>

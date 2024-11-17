@@ -10,10 +10,10 @@ export const FolderInfo = ({ folderId }: Props) => {
   const { data } = useQueryData(["folder-info"], () =>
     getFolderInfo({ folderId })
   );
-  const { data: folderData, status } = data as FolderProps;
+  const { data: folderData } = data as FolderProps;
   return (<div className="flex items-center" >
       <h2 className="text-[#BdBdBd] text-2xl ">
-        {folderData?.name}
+        {folderData?.name||""}
       </h2>
     </div>
   );
