@@ -137,5 +137,5 @@ export type VideoCommentProps = {
     commentId: string | null;
     userId: string | null;
     videoId: string | null;
-  };
+  }[];
 };

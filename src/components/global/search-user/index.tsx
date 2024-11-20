@@ -6,21 +6,31 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import Spinner from "../spinner";
+import { inviteMembers } from "@/actions/user";
+// Receiver Id is hardcoded make sure its dynamic  down there 
 interface Props {
   workspaceId: string;
 }
 
 const Search = ({ workspaceId }: Props) => {
   const { searchQuery, onUsers, isFetching, query } = useSearch({
-    key: "get-workspace",
+    key: "get-users",
     type: "USERS",
   });
-  //   const { mutate, isPending } = useMutationData({
-  //     mutationKey: ["invite-member"],
-  //     mutationFn: (data: { receiverId: string; email: string }) => {
-  //       inviteMembers(workspaceId, data);
-  //     },
-  //   });
+
+  const { mutate, isPending } = useMutationData({
+    mutationKey: ["invite-member"],
+    mutationFn: (data: {
+      receiverId: string;
+      email: string;
+      receiverName?: string;
+    }) =>
+      inviteMembers(workspaceId, {
+        ...data,
+        // here make this hardcode stuff to dynamic 
+        receiverId: onUsers?.[0]?.id || "",
+      }),
+  });
   return (
     <div className="flex flex-col gap-y-6 ">
       <Input
@@ -43,7 +53,7 @@ const Search = ({ workspaceId }: Props) => {
         onUsers.map((user) => (
           <div
             key={user.id}
-            className="flex items-center gap-x-2 border-2 rounded-xl "
+            className="flex items-center gap-x-2 border-2 rounded-xl p-4 "
           >
             <Avatar>
               <AvatarImage src={user?.image || ""} />
@@ -56,15 +66,23 @@ const Search = ({ workspaceId }: Props) => {
               <h3 className="text-bold text-lg capitalize">
                 {user.firstname} {user.lastname}
               </h3>
-              <p className="text-sm text-gray-500 lowercase bg-white rounded-lg">
+              <p className="text-sm uppercase  font-semibold bg-demonGreen text-white rounded-lg px-2">
                 {user.subscription?.plan}
               </p>
             </div>
             <div className="flex flex-1 justify-end items-center">
-              <Button variant="default" className="w-5/12 font-bold"> 
-                <Spinner loading={false}>
-                  Invite
-                </Spinner>
+              <Button
+                onClick={() =>
+                  mutate({
+                    recieverId: user.id,
+                    email: user.email,
+                    receiverName: user.firstname + " " + user.lastname,
+                  })
+                }
+                variant="default"
+                className="w-5/12 font-bold"
+              >
+                <Spinner loading={isPending}>Invite</Spinner>
               </Button>
             </div>
           </div>

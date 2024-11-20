@@ -61,7 +61,7 @@ const Layout = async (props: Props) => {
           <GlobalHeader workspace={hasAccess.data} workspaceId={workspaceId} />
           <div className="mt-4"></div>
           {children}
-        </div>
+        </div> 
       </div>
     </HydrationBoundary>
   );

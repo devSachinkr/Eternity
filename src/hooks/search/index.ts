@@ -32,18 +32,25 @@ const useSearch = ({
   const { refetch, isFetching } = useQueryData(
     [key, debouncedQuery],
     async ({ queryKey }) => {
-      if (type === "USERS") {
-        const workspace = await searchUsers(queryKey[1] as string);
-        if (workspace.status === 200) setOnUsers(workspace.data);
+      if (type === 'USERS') {
+        try {
+          const users = await searchUsers(queryKey[1] as string);
+          if (users.status === 200) {
+            setOnUsers(users.data);
+            return users.data;
+          } else {
+            return null;  
+          }
+        } catch (error) {
+          console.error('Error fetching users:', error);
+          return null; }
       }
+  
+      return null;
     },
     false
   );
-
-  useEffect(() => {
-    if (debouncedQuery) refetch();
-    if (!debouncedQuery) setOnUsers(undefined);
-  }, [debouncedQuery]);
+  
 
   useEffect(() => {
     const delayInputTimeoutId = setTimeout(() => {
@@ -52,6 +59,13 @@ const useSearch = ({
 
     return () => clearTimeout(delayInputTimeoutId);
   }, [query]);
+
+  
+  useEffect(() => {
+    if (debouncedQuery) refetch();
+    if (!debouncedQuery) setOnUsers(undefined);
+    
+  }, [debouncedQuery]);
 
   return { searchQuery, onUsers, isFetching, query };
 };

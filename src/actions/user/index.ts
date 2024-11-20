@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/prisma";
 import { currentUser } from "@clerk/nextjs/server";
+import { sendMail } from "../mail";
 
 export const getAllUserVideos = async ({
   workspaceId,
@@ -83,7 +84,7 @@ export const getNotifications = async () => {
 export const searchUsers = async (query: string) => {
   try {
     const user = await currentUser();
-    if (!user) return { status: 403, data: undefined };
+    if (!user) return { status: 403, data: [] };
     const users = await db.user.findMany({
       where: {
         OR: [
@@ -123,23 +124,97 @@ export const searchUsers = async (query: string) => {
       },
     });
     if (users && users.length) return { status: 200, data: users };
-    return { status: 403, data: undefined };
+    return { status: 403, data: [] };
   } catch (error) {
     console.log(error);
-    return { status: 500, data: undefined };
+    return { status: 500, data: [] };
   }
 };
 
 export const inviteMembers = async (
   workspaceId: string,
-  data: { receiverId: string; email: string }
+  data: { receiverId: string; email: string; receiverName?: string }
 ) => {
+  if (!data.receiverId) {
+    console.log("❌");
+    return;
+  }
   try {
     const user = await currentUser();
     if (!user) return { status: 403 };
+    const senderInfo = await db.user.findUnique({
+      where: {
+        clerkId: user.id,
+      },
+      select: {
+        id: true,
+        firstname: true,
+        lastname: true,
+      },
+    });
+    if (senderInfo?.id) {
+      const workspaceInfo = await db.workSpace.findUnique({
+        where: {
+          id: workspaceId,
+        },
+        select: {
+          name: true,
+        },
+      });
+      if (workspaceInfo) {
+        const invitation = await db.invite.create({
+          data: {
+            senderId: senderInfo.id,
+            recieverId: data.receiverId,
+            workSpaceId: workspaceId,
+            content: `${senderInfo.firstname} ${senderInfo.lastname} invited you to join ${workspaceInfo.name} workspace. click accept to join the workspace`,
+          },
+          select: {
+            id: true,
+          },
+        });
+
+        await db.user.update({
+          where: {
+            clerkId: user.id,
+          },
+          data: {
+            notification: {
+              create: {
+                content: `${senderInfo.firstname} ${
+                  senderInfo.lastname
+                } invited ${data.receiverName || data.email}  to join ${
+                  workspaceInfo.name
+                } workspace.`,
+              },
+            },
+          },
+        });
+
+        if (invitation) {
+          const { transporter, payload } = await sendMail({
+            to: data.email,
+            subject: "Invitation to join workspace",
+            text: `${senderInfo.firstname} ${senderInfo.lastname} invited you to join ${workspaceInfo.name} workspace. click accept to join the workspace`,
+            html: `<a href="${process.env.NEXT_PUBLIC_HOST_URL}/invite/${invitation.id}" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Accept Invitation</a>`,
+          });
+          transporter.sendMail(payload, async (error, info) => {
+            if (error) {
+              console.log("Email error 🔴: ", error);
+            } else {
+              console.log("Email sent 🟢: ", info);
+            }
+          });
+          return { status: 200, message: "Invitation sent successfully" };
+        }
+        return { status: 403, message: "Failed to send invitation" };
+      }
+      return { status: 403, message: "Failed to get workspace info" };
+    }
+    return { status: 403, message: "Failed to get sender info" };
   } catch (error) {
     console.log(error);
-    return { status: 500 };
+    return { status: 500, message: "Internal server error" };
   }
 };
 
@@ -221,23 +296,23 @@ export const createComment = async ({
   userId: string;
 }) => {
   try {
-    const user = await currentUser();
-    if (!user) return { status: 403 };
-    const res = await db.comment.update({
-      where: {
-        id: commentId,
-      },
-      data: {
-        reply: {
-          create: {
-            comment,
-            userId,
-            videoId,
+    if (commentId) {
+      const res = await db.comment.update({
+        where: {
+          id: commentId,
+        },
+        data: {
+          reply: {
+            create: {
+              comment,
+              userId,
+              videoId,
+            },
           },
         },
-      },
-    });
-    if (res) return { status: 200, message: "Reply Posted" };
+      });
+      if (res) return { status: 200, message: "Reply Posted" };
+    }
     const newComment = await db.video.update({
       where: {
         id: videoId,
@@ -292,18 +367,18 @@ export const getVideoComments = async (id: string) => {
             commentId: id,
           },
         ],
-        commentId:null,
+        commentId: null,
       },
-     include:{
-      reply:{
-        include:{
-          User:true
+      include: {
+        reply: {
+          include: {
+            User: true,
+          },
         },
+        User: true,
       },
-      User:true
-     }
     });
-    if (res && res.length) return { status: 200, data: res };
+    if (res) return { status: 200, data: res };
     return { status: 403 };
   } catch (error) {
     console.log(error);
