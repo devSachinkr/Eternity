@@ -1,4 +1,8 @@
 "use client";
+import GlobalCard from "@/components/global/card";
+import Modal from "@/components/global/modal";
+import Search from "@/components/global/search-user";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -8,30 +12,31 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import Image from "next/image";
-import React from "react";
-import { useSidebar } from "@/hooks/sidebar";
 import { Separator } from "@/components/ui/separator";
-import Modal from "@/components/global/modal";
-import { Menu, PlusCircle } from "lucide-react";
-import Search from "@/components/global/search-user";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { MENU_ITEMS } from "@/constants";
-import SidebarItem from "./sidebar-item";
+import { useSidebar } from "@/hooks/sidebar";
+import { Menu, PlusCircle } from "lucide-react";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
-import WorkspacePlaceHolder from "./workspace-place-holder";
-import GlobalCard from "@/components/global/card";
-import Spinner from "@/components/global/spinner";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTitle, SheetHeader, SheetTrigger } from "@/components/ui/sheet";
 import InfoBar from "./info-bar";
+import PaymentButton from "./payment-button";
+import SidebarItem from "./sidebar-item";
+import WorkspacePlaceHolder from "./workspace-place-holder";
 interface Props {
   activeWorkspaceId: string;
 }
 
 const Sidebar = ({ activeWorkspaceId }: Props) => {
   const pathName = usePathname();
-  const { onChangeActiveWorkspace, workspaces, currentWorkspace, count, } =
-    useSidebar({activeWorkspaceId});
+  const { onChangeActiveWorkspace, workspaces, currentWorkspace, count } =
+    useSidebar({ activeWorkspaceId });
   const sidebarSection = (
     <div className="bg-[#111111] flex-none relative p-4 h-full w-[250px] flex flex-col gap-4 items-center your-scrollable-container">
       <div className=" flex bg-[#111111] p-4 gap-2 justify-center items-center  mb-4 absolute top-0 left-0 right-0">
@@ -171,9 +176,7 @@ const Sidebar = ({ activeWorkspaceId }: Props) => {
           title="Upgrade to PRO"
           description="Unlock AI features like transcription, AI Summary, and more."
         >
-          <Button className="text-sm w-full mt-2">
-            <Spinner loading={false}>Upgrade</Spinner>
-          </Button>
+          <PaymentButton />
         </GlobalCard>
       )}
     </div>

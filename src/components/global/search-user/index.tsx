@@ -7,7 +7,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import Spinner from "../spinner";
 import { inviteMembers } from "@/actions/user";
-// Receiver Id is hardcoded make sure its dynamic  down there 
 interface Props {
   workspaceId: string;
 }
@@ -27,7 +26,6 @@ const Search = ({ workspaceId }: Props) => {
     }) =>
       inviteMembers(workspaceId, {
         ...data,
-        // here make this hardcode stuff to dynamic 
         receiverId: onUsers?.[0]?.id || "",
       }),
   });

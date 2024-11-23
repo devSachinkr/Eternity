@@ -18,6 +18,7 @@ const PreviewVideo = ({ videoId }: Props) => {
   const { previewVideo, author, daysAgo } = usePreviewVideo({
     videoId,
   });
+  
   return (
     <div className="grid grid-cols-1 xl:grid-cols-3   lg:py-10 overflow-y-auto gap-5">
       <div className="flex flex-col lg:col-span-2 gap-y-10">
