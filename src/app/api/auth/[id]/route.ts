@@ -4,8 +4,9 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   req: NextRequest,
-  { params: { id } }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;  
   console.log("Endpoint hit 🟢");
   try {
     const user = await db.user.findUnique({
@@ -20,7 +21,7 @@ export async function GET(
         },
       });
       if (user) {
-        return NextResponse.json({ status: 200, user });
+        return  NextResponse.json({ status: 200, user });
       }
     //@ts-expect-error - Clerk types compatibility issue with user instance
       const userInstance = await clerkClient.users.getUser(id);
